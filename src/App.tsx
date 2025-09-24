@@ -259,24 +259,22 @@ const SchoolDataTab: React.FC<{
 
   // Toggle signing mode untuk Guru
   const handleToggleGuruSigning = () => {
-    if (isGuruSigning) {
-      // Jika sedang signing, hapus signature dan keluar dari mode signing
-      if (guruSigCanvas.current) {
-        guruSigCanvas.current.clear();
+  if (isGuruSigning) {
+    // Keluar dari mode signing: simpan signature jika ada
+    if (guruSigCanvas.current && !guruSigCanvas.current.isEmpty()) {
+      const newSignature = getCanvasSignature(guruSigCanvas.current);
+      if (newSignature) {
+        setTtdGuru(newSignature);
       }
-      setTtdGuru("");
-      setIsGuruSigning(false);
-    } else {
-      // Masuk ke mode signing
-      setIsGuruSigning(true);
-      setTimeout(() => {
-        if (guruSigCanvas.current) {
-          guruSigCanvas.current.clear();
-        }
-      }, 50);
     }
-  };
-
+    setIsGuruSigning(false);
+  } else {
+    // Masuk ke mode signing: jangan clear canvas!
+    // Biarkan user melanjutkan atau mulai tanda tangan baru tanpa reset otomatis
+    setIsGuruSigning(true);
+  }
+};
+  
   if (loading) {
     return (
       <div className="text-center py-8">
